@@ -25,28 +25,28 @@ import json
 import urllib.request
 
 def get_astroid_names():
- 	url = 'https://api.nasa.gov/neo/rest/v1/feed?start_date=2015-09-07&end_date=2015-09-08&api_key=T0dyzDdd835vwrdufEiFjOFyasdZKcSb4WkUhOfG'
-    data_from_server = urllib.request.urlopen(url).read() 
+    url = 'https://api.nasa.gov/neo/rest/v1/feed?start_date=2015-09-07&end_date=2015-09-08&api_key=T0dyzDdd835vwrdufEiFjOFyasdZKcSb4WkUhOfG'
+    data_from_server = urllib.request.urlopen(url).read()
     string_from_server = data_from_server.decode('utf-8')
-    astroid_list = json.loads(string_from_server)
-    result_list = []
-    for astroid_dictionary in astroid_list:
-        name = astroid_dictionary['name']
-        result_list.append(name)
-    return result_list
+    astroid_dictionary = json.loads(string_from_server)
+    print("test outside the loop")
+    print(type(astroid_dictionary))
+    for key in astroid_dictionary:
+    	print("test inside the loop")
+    	print(type(astroid_dictionary[key]))
+    	print("API is nested dictionary")
+      #name = astroid_dictionary['name']
+      #result_list.append(name)
+    return ""
 
-def get_astroid_detail(name):
+def get_astroid_detail():
     url = 'https://api.nasa.gov/neo/rest/v1/feed?start_date=2015-09-07&end_date=2015-09-08&api_key=T0dyzDdd835vwrdufEiFjOFyasdZKcSb4WkUhOfG'
     data_from_server = urllib.request.urlopen(url).read() 
     string_from_server = data_from_server.decode('utf-8')
-    astroid_list = json.loads(string_from_server)
+    astroid_dictionary = json.loads(string_from_server)
     result_list = []
-    for astroid_dictionary in astroid_list:
-        if name == astroid_dictionary['name']:
-        	estimated_diameter = astroid_dictionary['astroid_dictionary']['kilometers']
-        	is_potentially_hazardous_asteroid = astroid_dictionary['is_potentially_hazardous_asteroid']
-
-        	result_list.append({'estimated_diameter':estimated_diameter, 'is_potentially_hazardous_asteroid':is_potentially_hazardous_asteroid})
+    for key in astroid_dictionary:
+    	print("unable to return details, apologies")
     return result_list
 
 def main(args):
@@ -56,15 +56,15 @@ def main(args):
             print(i)
 
     elif args.action == 'details':
-        astroid_details = get_astroid_detail(args.name)
+        astroid_details = get_astroid_detail()
         for info in astroid_details:
     
             diameter = info['estimated_diameter']
             hazard = info['is_potentially_hazardous_asteroid']
             if hazard:
-            	print(arge.name' has {0}km diameter and IS a danger to humanity]'.format(diameter))
-        	else:
-        		print(arge.name' has {0}km diameter and IS NOT a danger to humanity]'.format(diameter))
+            	print(args.name + ' has {0}km diameter and IS a danger to humanity]'.format(diameter))
+            else:
+            	print(args.name + ' has {0}km diameter and IS NOT a danger to humanity]'.format(diameter))
 
 if __name__ == '__main__':
 
@@ -73,6 +73,5 @@ if __name__ == '__main__':
     parser.add_argument('action', metavar='action', help='action to perform on the data ("names" or "detail")',
                         choices=['names', 'detail'])
 
-    parser.add_argument('name', help='name the asteroid of detail you want')
     args = parser.parse_args()
     main(args)
